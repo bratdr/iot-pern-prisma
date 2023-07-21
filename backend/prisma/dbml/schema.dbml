@@ -1,0 +1,125 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table Role {
+  id String [pk]
+  name String [unique, not null]
+  user User [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table User {
+  id String [pk]
+  username String [unique, not null]
+  email String [unique, not null]
+  password String [not null]
+  passwordUpdatedAt DateTime [not null]
+  accountIsVerified Boolean [not null, default: false]
+  emailIsVerified Boolean [not null, default: false]
+  token String [unique]
+  tokenExpiredAt DateTime
+  tokenType TOKEN_TYPE
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  role Role [not null]
+  roleId String [not null]
+  profil Profil
+}
+
+Table Profil {
+  id String [pk]
+  full_name String
+  photo String
+  user User [not null]
+  userId String [unique, not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table Sekolah {
+  id String [pk]
+  nama String
+  alamat String
+  nomorTelepon String
+  siswa Siswa [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table Siswa {
+  id String [pk]
+  nisn String [unique]
+  cardId String [unique]
+  nama String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  Sekolah Sekolah
+  sekolahId String
+  Commute Commute [not null]
+  commuteId String
+}
+
+Table Commute {
+  id String [pk]
+  startPosition String
+  finishPosition String
+  isActiveCommuting Boolean
+  siswa Siswa [not null]
+  bis Bis [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table Bis {
+  id String [pk]
+  nomorPolisi String [unique]
+  merek String
+  position String
+  status STATUS_BIS [not null, default: 'NORMAL']
+  supir Supir
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  supirId String [unique]
+  Commute Commute [not null]
+  commuteId String
+}
+
+Table Supir {
+  id String [pk]
+  nomorTelepon String [unique]
+  nama String
+  alamat String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  Bis Bis
+}
+
+Table CommuteToSiswa {
+  commuteId String [ref: > Commute.id]
+  siswaId String [ref: > Siswa.id]
+}
+
+Table BisToCommute {
+  bisId String [ref: > Bis.id]
+  commuteId String [ref: > Commute.id]
+}
+
+Enum TOKEN_TYPE {
+  RESET_TOKEN
+  VERIFICATION_TOKEN
+}
+
+Enum STATUS_BIS {
+  NORMAL
+  DARURAT
+}
+
+Ref: User.roleId > Role.id
+
+Ref: Profil.userId - User.id [delete: Cascade]
+
+Ref: Siswa.sekolahId > Sekolah.id
+
+Ref: Bis.supirId - Supir.id
