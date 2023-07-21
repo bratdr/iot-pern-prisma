@@ -1,10 +1,48 @@
-import { users } from "../../../data/Users";
 import Navigation from "../../../components/AdminNav";
-import { useNavigate } from "react-router-dom";
 import { FaUser } from "react-icons/fa6";
+import axios from "axios";
+import useSWR, { useSWRConfig } from "swr";
+import { Link } from "react-router-dom";
 
-const UsersTable = () => {
-  const navigate = useNavigate();
+const ManageSiswa = () => {
+  const { mutate } = useSWRConfig();
+  const fetcher = async (url) => {
+    const response = await axios.get(url);
+    return response.data.data;
+  };
+
+  const { data, error } = useSWR("http://localhost:5024/api/v1/siswa", fetcher);
+
+  const deleteSiswa = async (siswaID) => {
+    // Show a confirmation alert before proceeding with the deletion
+    const shouldDelete = window.confirm(
+      "Anda yakin untuk menghapus user ini ? 🤨"
+    );
+    if (!shouldDelete) {
+      return; // User canceled the deletion
+    }
+
+    try {
+      await axios.delete("http://localhost:5024/api/v1/siswa", {
+        data: { id: siswaID },
+      });
+      mutate("http://localhost:5024/api/v1/siswa");
+    } catch (error) {
+      console.log("Error deleting driver:", error);
+    }
+  };
+
+  if (!data && !error) {
+    return <h2>Loading...</h2>;
+  }
+
+  if (error) {
+    return <h2>Error fetching data: {error.message}</h2>;
+  }
+
+  if (data.length === 0) {
+    return <h2>No data available.</h2>;
+  }
 
   return (
     <>
@@ -67,38 +105,43 @@ const UsersTable = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
-                  {users.map((user) => (
-                    <tr key={user.id}>
+                  {data.map((siswa, index) => (
+                    <tr key={siswa.id}>
                       <td className="whitespace-nowrap px-6 py-4">
-                        <div className="text-sm text-gray-900">{user.id}</div>
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4">
-                        <div className="text-sm text-gray-900">{user.name}</div>
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4">
-                        <div className="text-sm text-gray-900">{user.nisn}</div>
+                        <div className="text-sm text-gray-900">{index + 1}</div>
                       </td>
                       <td className="whitespace-nowrap px-6 py-4">
                         <div className="text-sm text-gray-900">
-                          {user.card_id}
+                          {siswa.nama}
                         </div>
                       </td>
                       <td className="whitespace-nowrap px-6 py-4">
                         <div className="text-sm text-gray-900">
-                          {user.school}
+                          {siswa.nisn}
+                        </div>
+                      </td>
+                      <td className="whitespace-nowrap px-6 py-4">
+                        <div className="text-sm text-gray-900">
+                          {siswa.card_id}
+                        </div>
+                      </td>
+                      <td className="whitespace-nowrap px-6 py-4">
+                        <div className="text-sm text-gray-900">
+                          {siswa.school}
                         </div>
                       </td>
                       <td className="whitespace-nowrap px-6 py-4">
                         <div className="flex gap-2 text-sm">
-                          <button
-                            onClick={() =>
-                              navigate("/admin/dashboard/user/edit")
-                            }
-                            className="bg-sky-50 text-gray-900 hover:text-sky-800"
+                          <Link
+                            to={"/admin/dashboard/user/edit/"}
+                            className="rounded bg-sky-50 px-6 py-2 text-gray-900 hover:text-sky-800"
                           >
                             Edit
-                          </button>
-                          <button className="bg-rose-50 hover:text-red-800">
+                          </Link>
+                          <button
+                            onClick={() => deleteSiswa(siswa.id)}
+                            className="bg-rose-50 hover:text-red-800"
+                          >
                             Delete
                           </button>
                         </div>
@@ -115,4 +158,4 @@ const UsersTable = () => {
   );
 };
 
-export default UsersTable;
+export default ManageSiswa;
