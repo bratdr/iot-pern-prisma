@@ -1,32 +1,35 @@
 import { useState, useRef } from "react";
-import { schools } from "../../../../data/Schools";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const AddUser = () => {
   const navigate = useNavigate();
   const [name, setName] = useState("");
-  const [nisn, setNisn] = useState("");
-  const [school, setSchool] = useState("");
-  // const [ktmcard, setKtmCard] = useState("");
+  const [no_induk, setNisn] = useState("");
   const formRef = useRef(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
     // Perform form submission logic
+
+    await axios.post("http://localhost:5024/api/v1/siswa", {
+      nama: name,
+      nisn: no_induk,
+    });
 
     // Reset form values
     setName("");
     setNisn("");
-    setSchool("");
 
-    // Clear file input
+    // // Clear file input
     if (formRef.current) {
       formRef.current.reset();
     }
 
-    // Show alert window
+    // // Show alert window
     window.alert("Form submitted successfully!");
+
+    navigate("/admin/dashboard/user");
   };
 
   return (
@@ -41,7 +44,7 @@ const AddUser = () => {
           ref={formRef}
         >
           <label className="flex flex-col gap-2">
-            Nama
+            Nama Siswa
             <input
               className="rounded p-2 text-sm font-normal outline outline-1 outline-slate-200 focus:bg-sky-50 focus:duration-700"
               type="text"
@@ -56,36 +59,9 @@ const AddUser = () => {
               className="rounded p-2 text-sm font-normal outline outline-1 outline-slate-200 focus:bg-sky-50 focus:duration-700"
               type="text"
               placeholder="Enter the nisn"
-              value={nisn}
+              value={no_induk}
               onChange={(e) => setNisn(e.target.value)}
             />
-          </label>
-          <label className="flex flex-col gap-2">
-            Sekolah
-            <div className="relative">
-              <select
-                className="block w-full appearance-none rounded border border-slate-200 bg-white px-4 py-3 pr-8 leading-tight text-gray-700 focus:border-gray-500 focus:bg-white focus:outline-none"
-                id="grid-state"
-                value={school}
-                onChange={(e) => setSchool(e.target.value)}
-              >
-                <option value="">Select a school</option>
-                {schools.map((school) => (
-                  <option key={school.id} value={school.name}>
-                    {school.name}
-                  </option>
-                ))}
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                <svg
-                  className="h-4 w-4 fill-current"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                </svg>
-              </div>
-            </div>
           </label>
 
           <div className="mt-2 flex flex-col gap-2">

@@ -28,7 +28,7 @@ const ManageSiswa = () => {
       });
       mutate("http://localhost:5024/api/v1/siswa");
     } catch (error) {
-      console.log("Error deleting driver:", error);
+      console.log("Error deleting sekolah:", error);
     }
   };
 
@@ -38,10 +38,6 @@ const ManageSiswa = () => {
 
   if (error) {
     return <h2>Error fetching data: {error.message}</h2>;
-  }
-
-  if (data.length === 0) {
-    return <h2>No data available.</h2>;
   }
 
   return (
@@ -54,13 +50,13 @@ const ManageSiswa = () => {
           <div className="w-full overflow-scroll">
             <div className="mb-4">
               <h2 className="pb-8 text-4xl font-bold">Users Management</h2>
-              <button
-                onClick={() => navigate("/admin/dashboard/user/add")}
-                className="flex flex-row items-center justify-center gap-4 rounded-md bg-black text-sm font-semibold text-white outline outline-1 outline-gray-200 hover:bg-white hover:text-black"
+              <Link
+                to={"/admin/dashboard/user/add"}
+                className="flex flex-row items-center justify-center gap-4 rounded-md bg-black py-2 text-sm font-semibold text-white outline outline-1 outline-gray-200 hover:bg-white hover:text-black"
               >
                 <FaUser size={16} />
                 Tambah Siswa
-              </button>
+              </Link>
             </div>
             <div className="overflow-x-scroll overflow-y-scroll border-b border-gray-200 shadow sm:overflow-hidden sm:rounded-lg">
               <table className="min-w-full divide-y divide-gray-200">
@@ -127,7 +123,7 @@ const ManageSiswa = () => {
                       </td>
                       <td className="whitespace-nowrap px-6 py-4">
                         <div className="text-sm text-gray-900">
-                          {siswa.school}
+                          {siswa.Sekolah?.nama || "Tidak didaftarkan"}
                         </div>
                       </td>
                       <td className="whitespace-nowrap px-6 py-4">
