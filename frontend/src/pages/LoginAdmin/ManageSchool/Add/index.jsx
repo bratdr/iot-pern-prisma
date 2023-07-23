@@ -1,31 +1,38 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const AddSchool = () => {
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
-  const [telephone, setTelephone] = useState("");
-  // const [ktmcard, setKtmCard] = useState("");
+  const [noTelp, setTelephone] = useState("");
   const formRef = useRef(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
     // Perform form submission logic
+
+    await axios.post("http://localhost:5024/api/v1/sekolah", {
+      nama: name,
+      alamat: address,
+      nomorTelepon: noTelp,
+    });
 
     // Reset form values
     setName("");
     setAddress("");
     setTelephone("");
 
-    // Clear file input
+    // // Clear file input
     if (formRef.current) {
       formRef.current.reset();
     }
 
-    // Show alert window
+    // // Show alert window
     window.alert("Form submitted successfully!");
+
+    navigate("/admin/dashboard/school");
   };
 
   return (
@@ -65,8 +72,8 @@ const AddSchool = () => {
               className="rounded p-2 text-sm font-normal outline outline-1 outline-slate-200 focus:bg-sky-50 focus:duration-700"
               type="text"
               placeholder="Enter the phone number"
-              value={telephone}
-              onChange={(e) => setAddress(e.target.value)}
+              value={noTelp}
+              onChange={(e) => setTelephone(e.target.value)}
             />
           </label>
           <div className="flex flex-col gap-2">
