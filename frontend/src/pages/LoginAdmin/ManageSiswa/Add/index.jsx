@@ -29,7 +29,7 @@ const AddUser = () => {
     // // Show alert window
     window.alert("Form submitted successfully!");
 
-    navigate("/admin/dashboard/user");
+    navigate("/admin/dashboard/siswa");
   };
 
   return (
@@ -70,7 +70,7 @@ const AddUser = () => {
               type="submit"
             />
             <button
-              onClick={() => navigate("/admin/dashboard/user")}
+              onClick={() => navigate("/admin/dashboard/siswa")}
               className="rounded bg-rose-500 p-3 text-base font-semibold text-white hover:bg-rose-600 hover:duration-300"
             >
               Back
