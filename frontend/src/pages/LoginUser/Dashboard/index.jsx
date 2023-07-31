@@ -1,5 +1,6 @@
 import Navigation from "../../../components/Navigation";
 import mapsIMG from "../../../assets/Union.png";
+import OpenMaps from "../../../components/OpenMaps";
 import { buses } from "../../../data/Buses";
 import { users } from "../../../data/Users";
 import { TbMoodKidFilled } from "react-icons/tb";
@@ -31,17 +32,13 @@ const Dashboard = () => {
         <div className="absolute z-10">
           <Navigation />
         </div>
-        <div className="ml-16 grid w-screen grid-cols-2 grid-rows-4 gap-2 bg-slate-100 px-2 py-2 sm:grid-cols-4">
+        <div className="z-0 ml-16 grid w-screen grid-cols-2 grid-rows-4 gap-2 bg-slate-100 px-2 py-2 sm:grid-cols-4">
           {/* Tracking Map */}
           <div className="col-span-2 row-span-2 flex flex-col items-center border border-black bg-black sm:col-span-3 sm:col-start-2 sm:row-span-4 sm:row-start-1 sm:justify-start sm:gap-6 sm:overflow-clip sm:bg-slate-50">
             <h1 className="flex flex-row items-center justify-center gap-2 py-2 text-center text-sm font-bold text-white sm:w-full sm:bg-black sm:text-lg sm:text-white">
               <FaLocationDot /> Tracking Location :
             </h1>
-            <img
-              className="h-full w-fit object-cover sm:mt-6 sm:h-5/6 sm:w-auto sm:rounded-xl sm:border sm:border-black sm:object-cover"
-              src={mapsIMG}
-              alt="maps"
-            />
+            <OpenMaps />
           </div>
           {/* Passagers Info */}
           <div className="col-span-2 row-start-3 flex flex-col overflow-auto border border-black bg-slate-50 sm:col-auto sm:col-start-1 sm:row-span-2 sm:row-start-1 sm:overflow-clip sm:bg-white">
