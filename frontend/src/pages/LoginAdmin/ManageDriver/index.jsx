@@ -40,10 +40,6 @@ const ManageDriver = () => {
     return <h2>Error fetching data: {error.message}</h2>;
   }
 
-  if (data.length === 0) {
-    return <h2>No data available.</h2>;
-  }
-
   return (
     <>
       <div className="z-0 flex h-screen w-screen flex-row">
