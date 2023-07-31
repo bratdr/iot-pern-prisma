@@ -39,10 +39,6 @@ const ManageSchool = () => {
     return <h2>Loading...</h2>;
   }
 
-  if (error) {
-    return <h2>Error fetching data: {error.message}</h2>;
-  }
-
   return (
     <>
       <div className="z-0 flex h-screen w-screen flex-row">
