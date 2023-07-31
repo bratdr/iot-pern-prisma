@@ -68,3 +68,5 @@ In this project, you can run the following scripts:
 | npm run dev   | Runs the app in the development mode.               |
 | npm run build | Builds the app for production to the `dist` folder. |
 | npm run serve | Serves the production build from the `dist` folder. |
+
+for more scripts you can read the package.json in backend and frontend folder
