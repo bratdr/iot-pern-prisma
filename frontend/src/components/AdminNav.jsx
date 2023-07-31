@@ -12,7 +12,7 @@ const AdminNav = () => {
         <section className="flex gap-2">
           <div
             className={`min-h-screen border border-y-0 border-l-0 border-black bg-[#000] ${
-              open ? "w-72 bg-opacity-95 sm:w-80" : "w-16"
+              open ? "w-48 bg-opacity-95 sm:w-48" : "w-16"
             } px-4 text-gray-100 duration-1000`}
           >
             <div className="flex justify-end py-3">
@@ -49,7 +49,7 @@ const AdminNav = () => {
                     <h2
                       className={`${
                         open && "hidden"
-                      } absolute left-48 w-0 overflow-hidden whitespace-pre rounded-md bg-white px-0 py-0 font-semibold text-gray-900 drop-shadow-lg group-hover:left-14 group-hover:w-fit group-hover:px-2 group-hover:py-1 group-hover:duration-300  `}
+                      } absolute left-0 w-0 overflow-hidden whitespace-pre rounded-md bg-white px-0 py-0 font-semibold text-gray-900 drop-shadow-lg group-hover:left-8 group-hover:w-fit group-hover:px-2 group-hover:py-1 group-hover:duration-300  `}
                     >
                       {data_ds?.name}
                     </h2>

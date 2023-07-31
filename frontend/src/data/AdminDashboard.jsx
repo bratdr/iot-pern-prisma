@@ -1,13 +1,13 @@
 import { RiLogoutBoxRFill } from "react-icons/ri";
 import { TbMoodKidFilled } from "react-icons/tb";
 import { FaSchool, FaUserAlt } from "react-icons/fa";
-import { BiSolidBusSchool } from "react-icons/bi";
+import { BiSolidBusSchool, BiSolidUser } from "react-icons/bi";
 
 export const data_dashboard = [
   {
     id: "1",
-    name: "Manage User",
-    link: "/admin/dashboard/user",
+    name: "Manage Siswa",
+    link: "/admin/dashboard/siswa",
     icon: TbMoodKidFilled,
   },
   {
@@ -20,7 +20,7 @@ export const data_dashboard = [
     id: "3",
     name: "Manage Driver",
     link: "/admin/dashboard/driver",
-    icon: FaUserAlt,
+    icon: BiSolidUser,
   },
   {
     id: "4",
