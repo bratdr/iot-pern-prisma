@@ -17,8 +17,8 @@
 To get a local copy of the code, clone it using git:
 
 ```
-git clone https://github.com/bratdr/iot-project.git
-cd iot-project
+git clone https://github.com/bratdr/iot-pern-prisma.git
+cd iot-pern-prisma
 ```
 
 Make it your own:
@@ -29,16 +29,32 @@ git add .
 git commit -m "Initial commit"
 ```
 
-Install dependencies:
+Install backend dependencies:
 
 ```
+cd backend
+yarn install
+```
+
+Install frontend dependencies:
+
+```
+cd frontend
 npm i
 ```
 
-Now, you can start a local web server by running:
+Now, you can start a local frontend web server by running:
 
 ```
+cd frontend
 npm run dev
+```
+
+Now, you can start a local backend web server by running:
+
+```
+cd backend
+nodemon app.js
 ```
 
 And then open http://localhost:5173 to view it in the browser.
