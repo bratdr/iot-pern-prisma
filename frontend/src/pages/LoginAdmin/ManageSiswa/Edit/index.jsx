@@ -57,7 +57,7 @@ const EditUser = () => {
       });
 
       window.alert("Siswa data updated successfully!");
-      navigate("/admin/dashboard/user");
+      navigate("/admin/dashboard/siswa");
     } catch (error) {
       console.log("Error updating siswa data:", error);
     }
@@ -128,7 +128,7 @@ const EditUser = () => {
               type="submit"
             />
             <button
-              onClick={() => navigate("/admin/dashboard/user")}
+              onClick={() => navigate("/admin/dashboard/siswa")}
               className="rounded bg-rose-500 p-3 text-base font-semibold text-white hover:bg-rose-600 hover:duration-300"
             >
               Back
