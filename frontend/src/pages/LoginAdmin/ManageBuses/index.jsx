@@ -39,10 +39,6 @@ const ManageBuses = () => {
     return <h2>Error fetching data: {error.message}</h2>;
   }
 
-  if (data.length === 0) {
-    return <h2>No data available.</h2>;
-  }
-
   return (
     <>
       <div className="z-0 flex h-screen w-screen flex-row">
@@ -118,6 +114,12 @@ const ManageBuses = () => {
                       </td>
                       <td className="whitespace-nowrap px-6 py-4">
                         <div className="flex gap-2 text-sm">
+                          <Link
+                            to={"/admin/dashboard/buses/set/"}
+                            className="rounded bg-sky-50 px-6 py-2 text-gray-900 hover:text-sky-800"
+                          >
+                            Set Supir
+                          </Link>
                           <Link
                             to={"/admin/dashboard/buses/edit/"}
                             className="rounded bg-sky-50 px-6 py-2 text-gray-900 hover:text-sky-800"
