@@ -6,15 +6,19 @@ const EditBuses = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
+  //Default State agar Data bisa Kosong sebelum memilih
   const [selectedId, setSelectedId] = useState("");
   const [busData, setBusesData] = useState([]);
   const [nomorPolisi, setNopol] = useState("");
   const [merk, setMerk] = useState("");
 
+  // Fetching bis data dari api
   useEffect(() => {
     const fetchBusData = async () => {
       try {
-        const response = await axios.get("http://localhost:5024/api/v1/bis");
+        const response = await axios.get(
+          "http://tracking.ta-tmj.com/api/v1/bis"
+        );
         setBusesData(response.data.data);
         setSelectedId(id);
       } catch (error) {
@@ -39,7 +43,7 @@ const EditBuses = () => {
     // Perform form submission logic
 
     try {
-      await axios.patch("http://localhost:5024/api/v1/bis", {
+      await axios.patch("http://tracking.ta-tmj.com/api/v1/bis", {
         id: selectedId,
         nomorPolisi,
         merk,
@@ -83,7 +87,7 @@ const EditBuses = () => {
             <input
               className="rounded p-2 text-sm font-normal outline outline-1 outline-slate-200 focus:bg-sky-50 focus:duration-700"
               type="text"
-              placeholder="Enter the bus police number"
+              placeholder="Masukan Nomor Polisi"
               value={nomorPolisi}
               onChange={(e) => setNopol(e.target.value)}
             />
@@ -94,7 +98,7 @@ const EditBuses = () => {
             <input
               className="rounded p-2 text-sm font-normal outline outline-1 outline-slate-200 focus:bg-sky-50 focus:duration-700"
               type="text"
-              placeholder="Enter the bus police number"
+              placeholder="Masukan Merek Kendaraan"
               value={merk}
               onChange={(e) => setMerk(e.target.value)}
             />

@@ -16,7 +16,7 @@ const EditSchool = () => {
     const fetchSekolahData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5024/api/v1/sekolah"
+          "http://tracking.ta-tmj.com/api/v1/sekolah"
         );
         setSekolahData(response.data.data);
         setSelectedId(id);
@@ -45,7 +45,7 @@ const EditSchool = () => {
     // Perform form submission logic
 
     try {
-      await axios.patch("http://localhost:5024/api/v1/sekolah", {
+      await axios.patch("http://tracking.ta-tmj.com/api/v1/sekolah", {
         id: selectedId,
         nama,
         alamat,

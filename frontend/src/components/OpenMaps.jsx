@@ -1,99 +1,94 @@
-import React, { useEffect, useState, useRef } from "react";
-import { FaBus } from "react-icons/fa";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import L from "leaflet";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
 const MapApp = () => {
-  const [userLocation, setUserLocation] = useState(null);
-  const [boundingBox, setBoundingBox] = useState(null);
-  const mapRef = useRef(null);
+  const [busData, setBusData] = useState(null);
 
   useEffect(() => {
-    // Set bounding box for a specific region (Example: New York City)
-    setBoundingBox({
-      minLat: 40.4774,
-      maxLat: 40.9176,
-      minLon: -74.2591,
-      maxLon: -73.7004,
-    });
+    // Fetch the specific bus with ID "clkqqwx5l0000vey09t1mk9o5"
+    fetchBusData("clkqqwx5l0000vey09t1mk9o5");
+
+    // Set interval to fetch the specific bus data every 5 seconds
+    const interval = setInterval(
+      () => fetchBusData("clkqqwx5l0000vey09t1mk9o5"),
+      5000
+    );
+
+    // Clear the interval on component unmount
+    return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    if (!boundingBox) return;
-
-    // Initialize the map after boundingBox is set
-    if (!mapRef.current) {
-      mapRef.current = L.map("map").setView([0, 0], 13);
-
-      // Add the OpenStreetMap tile layer
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(
-        mapRef.current
+  const fetchBusData = async (busId) => {
+    try {
+      const response = await axios.get(
+        `http://tracking.ta-tmj.com/api/v1/bis/${busId}`
       );
+      if (response.data.success) {
+        setBusData(response.data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching bus data:", error);
     }
-
-    // Function to generate random coordinates within a 10-meter radius from the initial coordinates
-    // Function to generate random coordinates within a 500-meter radius from the initial coordinates
-    const getRandomCoordinates = () => {
-      const lat = -6.366204;
-      const lon = 106.820784;
-      const radiusInMeters = 500;
-
-      // Convert the radius to degrees
-      const radiusInDegrees = radiusInMeters / 111320; // Approximate 1 degree of latitude in meters
-
-      // Generate random offsets in latitude and longitude
-      const latOffset = Math.random() * radiusInDegrees;
-      const lonOffset = Math.random() * radiusInDegrees;
-
-      // Calculate the new latitude and longitude
-      const newLat = lat + latOffset;
-      const newLon = lon + lonOffset;
-
-      return [newLat, newLon];
-    };
-
-    // Fill the map with markers at random coordinates within the 500-meter radius
-    const fillMapWithMarkers = () => {
-      for (let i = 0; i < 10; i++) {
-        const randomCoordinates = getRandomCoordinates();
-        L.marker(randomCoordinates).addTo(mapRef.current);
-      }
-    };
-
-    fillMapWithMarkers();
-
-    // Function to track user's coordinates
-    const trackCoordinates = () => {
-      if (navigator.geolocation) {
-        navigator.geolocation.watchPosition(
-          (position) => {
-            const { latitude, longitude } = position.coords;
-            setUserLocation([latitude, longitude]);
-
-            // Set the map view to the user's location
-            mapRef.current.setView([latitude, longitude], 13);
-
-            // Add a marker at the user's location
-            if (!userLocation) {
-              L.marker([latitude, longitude]).addTo(mapRef.current);
-            }
-          },
-          (error) => {
-            console.error("Error tracking coordinates:", error);
-          }
-        );
-      } else {
-        console.error("Geolocation is not supported by this browser.");
-      }
-    };
-
-    trackCoordinates();
-  }, [boundingBox, userLocation]);
+  };
 
   return (
-    <div className="flex h-screen w-screen flex-col items-center justify-center">
-      <div id="map" className="h-3/4 w-4/6"></div>
+    <div className="flex h-screen w-screen flex-col items-center justify-center border border-black bg-black px-5 pb-10 sm:h-screen sm:w-screen">
+      <h1 className="flex flex-row items-center justify-center gap-2 py-2 text-center text-sm font-bold text-white sm:w-full sm:bg-black sm:text-lg sm:text-white">
+        Tracking Location :
+      </h1>
+      <div id="map" className="h-full w-full">
+        <MapContainer
+          center={
+            busData?.position
+              ? busData.position.split(",").map(Number)
+              : [-6.366116, 106.820671]
+          }
+          zoom={28}
+          style={{ height: "100%" }}
+        >
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+
+          {busData && (
+            <Marker position={busData.position.split(",").map(Number)}>
+              <Popup>
+                <h2>Bus Details</h2>
+                <p>
+                  <strong>Bus ID:</strong> {busData.id}
+                  <br />
+                  <strong>License Plate:</strong> {busData.nomorPolisi}
+                  <br />
+                  <strong>Brand:</strong> {busData.merek}
+                  <br />
+                  <strong>Status:</strong> {busData.status}
+                  <br />
+                  {busData.supir && (
+                    <>
+                      <strong>Driver Name:</strong> {busData.supir.nama}
+                      <br />
+                      <strong>Driver Phone:</strong>{" "}
+                      {busData.supir.nomorTelepon}
+                      <br />
+                      <strong>Driver Address:</strong> {busData.supir.alamat}
+                      <br />
+                    </>
+                  )}
+                  {busData.streetName && (
+                    <>
+                      <strong>Street Name:</strong> {busData.streetName}
+                      <br />
+                    </>
+                  )}
+                </p>
+              </Popup>
+            </Marker>
+          )}
+        </MapContainer>
+      </div>
     </div>
   );
 };

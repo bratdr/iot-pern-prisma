@@ -13,12 +13,12 @@ const ConnectSiswa = () => {
 
   useEffect(() => {
     // Fetch the list of students from the API
-    axios.get("http://localhost:5024/api/v1/siswa").then((response) => {
+    axios.get("http://tracking.ta-tmj.com/api/v1/siswa").then((response) => {
       setSiswaList(response.data.data);
     });
 
     // Fetch the list of schools from the API
-    axios.get("http://localhost:5024/api/v1/sekolah").then((response) => {
+    axios.get("http://tracking.ta-tmj.com/api/v1/sekolah").then((response) => {
       setSchoolList(response.data.data);
     });
   }, []);
@@ -27,7 +27,7 @@ const ConnectSiswa = () => {
     setConnecting(true);
     try {
       const response = await axios.post(
-        "http://localhost:5024/api/v1/sekolah/siswa/pair",
+        "http://tracking.ta-tmj.com/api/v1/sekolah/siswa/pair",
         {
           idSiswa: selectedSiswa,
           idSekolah: selectedSchool,

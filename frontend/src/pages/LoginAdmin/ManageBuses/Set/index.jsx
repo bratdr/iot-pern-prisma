@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import { useBusContext } from "../busContext";
 
-const EditBuses = () => {
+const SetSupir = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { setNopol, setMerk } = useBusContext();
 
   const [selectedId, setSelectedId] = useState("");
   const [busData, setBusesData] = useState([]);
-  const [nomorPolisi, setNopol] = useState("");
-  const [merk, setMerk] = useState("");
 
   const [driversData, setDriversData] = useState([]);
   const [selectedDriverId, setSelectedDriverId] = useState("");
@@ -17,7 +17,9 @@ const EditBuses = () => {
   useEffect(() => {
     const fetchBusData = async () => {
       try {
-        const response = await axios.get("http://localhost:5024/api/v1/bis");
+        const response = await axios.get(
+          "http://tracking.ta-tmj.com/api/v1/bis"
+        );
         setBusesData(response.data.data);
         setSelectedId(id);
       } catch (error) {
@@ -40,7 +42,9 @@ const EditBuses = () => {
   useEffect(() => {
     const fetchDriversData = async () => {
       try {
-        const response = await axios.get("http://localhost:5024/api/v1/supir");
+        const response = await axios.get(
+          "http://tracking.ta-tmj.com/api/v1/supir"
+        );
         setDriversData(response.data.data);
       } catch (error) {
         console.log("Error fetching drivers data:", error);
@@ -60,7 +64,7 @@ const EditBuses = () => {
       };
 
       await axios.patch(
-        "http://localhost:5024/api/v1/bis/driver/set",
+        "http://tracking.ta-tmj.com/api/v1/bis/driver/set",
         requestBody
       );
 
@@ -74,7 +78,9 @@ const EditBuses = () => {
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center bg-slate-200 px-8">
       <div className="flex w-full flex-col rounded bg-slate-800 p-4 sm:w-3/6 xl:w-1/4">
-        <h1 className="text-3xl font-bold text-gray-50">Ubah Data Kendaraan</h1>
+        <h1 className="text-3xl font-bold text-gray-50">
+          Ubah Supir Kendaraan
+        </h1>
       </div>
       <div className="flex w-full flex-col rounded bg-slate-100 p-4 sm:w-3/6 xl:w-1/4">
         <form
@@ -134,4 +140,4 @@ const EditBuses = () => {
   );
 };
 
-export default EditBuses;
+export default SetSupir;

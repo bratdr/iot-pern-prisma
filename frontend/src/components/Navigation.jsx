@@ -1,86 +1,117 @@
-import React, { useState } from "react";
-import { HiMenuAlt3 } from "react-icons/hi";
+import axios from "axios";
+
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { HiLogout, HiMenuAlt3 } from "react-icons/hi";
 import { Link } from "react-router-dom";
 import { data_dashboard } from "../data/Dashboard";
-import { users } from "../data/Users";
+import { FaLocationDot } from "react-icons/fa6";
+import { FaHistory } from "react-icons/fa";
+import { TbMoodKidFilled } from "react-icons/tb";
+import { BiLogOut } from "react-icons/bi";
 
 const Navigation = () => {
+  const { idsiswa } = useParams();
+  const [user, setUser] = useState(null);
+  const [bus, setBus] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [open, setOpen] = useState(true);
-  const user = users.find((user) => user.id === "1");
+
+  useEffect(() => {
+    // Fetch the user data based on idsiswa from the API
+    const fetchUserData = async () => {
+      try {
+        const userResponse = await axios.get(
+          `http://tracking.ta-tmj.com/api/v1/siswa/${idsiswa}`
+        );
+        const success = userResponse.data?.success;
+        const userData = userResponse.data?.data;
+
+        if (success && userData) {
+          setUser(userData);
+        } else {
+          console.error("Failed to fetch user data.");
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    // Fetch the bus data from the API using the specific bus ID
+    const fetchBusData = async () => {
+      try {
+        const busId = "clkqqwx5l0000vey09t1mk9o5"; // Replace this with the actual bus ID from the API response or any other method to obtain the specific bus ID
+        const busResponse = await axios.get(
+          `http://tracking.ta-tmj.com/api/v1/bis/${busId}`
+        );
+        const success = busResponse.data?.success;
+        const busData = busResponse.data?.data;
+
+        if (success && busData) {
+          setBus(busData);
+        } else {
+          console.error("Failed to fetch bus data.");
+        }
+      } catch (error) {
+        console.error("Error fetching bus data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUserData();
+    fetchBusData();
+  }, [idsiswa]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   if (!user) {
     // Handle case when user is not found
-    return null;
+    return <div>User not found.</div>;
+  }
+
+  if (!bus) {
+    // Handle case when bus is not found
+    return <div>Bus not found.</div>;
   }
 
   return (
     <>
       <div>
-        <section className="flex gap-2">
-          <div
-            className={`min-h-screen border border-y-0 border-l-0 border-black bg-[#000] ${
-              open ? "w-72 bg-opacity-95 sm:w-80" : "w-16"
-            } px-4 text-gray-100 duration-1000`}
-          >
-            <div className="flex justify-end py-3">
-              <HiMenuAlt3
-                size={26}
-                className="cursor-pointer text-white"
+        <section className="flex w-screen items-center justify-center gap-2 bg-white py-3 sm:justify-between sm:px-6 ">
+          <div className="flex flex-row gap-2 sm:gap-4 ">
+            <div className="relative flex flex-col gap-4">
+              <Link
+                className="group flex items-center gap-3.5 rounded-md bg-slate-100 p-2 text-sm font-medium text-black hover:text-rose-600"
                 onClick={() => setOpen(!open)}
-              />
+              >
+                <FaLocationDot className="text-rose-600" size={22} />
+                <p className="text-xs font-semibold sm:text-base">
+                  Tracking Position
+                </p>
+              </Link>
             </div>
-            <div className="relative mt-4 flex flex-col gap-4">
-              {data_dashboard?.map((data_ds, i) => (
-                <Link
-                  to={data_ds?.link}
-                  key={i}
-                  className={` ${
-                    data_ds?.margin && "mt-4"
-                  } group flex items-center gap-3.5 rounded-md p-2 text-sm font-medium text-white hover:bg-slate-100 hover:text-rose-600`}
-                  onClick={() => setOpen(!open)}
-                >
-                  <div>
-                    {React.createElement(data_ds?.icon, { size: "20" })}
-                  </div>
-                  <div className="w-4 sm:w-auto">
-                    <h2
-                      style={{
-                        transitionDelay: `${i + 3}00ms`,
-                      }}
-                      className={`whitespace-pre text-rose-500 duration-500 ${
-                        !open && "translate-x-28 overflow-hidden opacity-0"
-                      }`}
-                    >
-                      {data_ds?.name}
-                    </h2>
-                    <h2
-                      className={`${
-                        open && "hidden"
-                      } absolute left-48 w-0 overflow-hidden whitespace-pre rounded-md bg-white px-0 py-0 font-semibold text-gray-900 drop-shadow-lg group-hover:left-14 group-hover:w-fit group-hover:px-2 group-hover:py-1 group-hover:duration-300  `}
-                    >
-                      {data_ds?.name}
-                    </h2>
-                    <p
-                      style={{
-                        transitionDelay: `${i + 3}00ms`,
-                      }}
-                      className={`whitespace-pre text-sm text-indigo-500 duration-500 ${
-                        !open && "translate-x-28 overflow-hidden opacity-0"
-                      }`}
-                    >
-                      {data_ds?.desc}
-                    </p>
-                    <p
-                      className={`${
-                        open && "hidden"
-                      } absolute left-48 w-0 overflow-hidden whitespace-pre rounded-md bg-white  px-0 py-0 text-sm font-medium text-gray-900 drop-shadow-lg group-hover:left-14 group-hover:w-fit group-hover:px-2 group-hover:py-1 group-hover:duration-300  `}
-                    >
-                      {data_ds?.desc}
-                    </p>
-                  </div>
-                </Link>
-              ))}
+            <div className="relative flex flex-col gap-4">
+              <Link
+                to={"/user/dashboard/history/"}
+                className="group flex items-center gap-3.5 rounded-md bg-slate-100 p-2 text-sm font-medium text-black hover:text-rose-600"
+              >
+                <FaHistory className="text-sky-600" size={22} />
+                <p className="text-xs font-semibold sm:text-base">History</p>
+              </Link>
             </div>
+          </div>
+
+          <div className="relative flex flex-col gap-4">
+            <Link
+              to={"/"}
+              className="group flex items-center gap-3.5 rounded-md bg-slate-100 p-2 text-sm font-medium text-black hover:text-rose-600"
+            >
+              <BiLogOut size={22} />
+              <p className="text-xs font-semibold sm:text-base">Logout</p>
+            </Link>
           </div>
         </section>
       </div>

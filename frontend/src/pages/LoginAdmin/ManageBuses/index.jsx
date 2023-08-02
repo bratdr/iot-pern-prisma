@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import Navigation from "../../../components/AdminNav";
 import { BiSolidBusSchool } from "react-icons/bi";
 import axios from "axios";
@@ -6,13 +7,50 @@ import { Link } from "react-router-dom";
 
 const ManageBuses = () => {
   const { mutate } = useSWRConfig();
+
   const fetcher = async (url) => {
     const response = await axios.get(url);
     return response.data.data;
   };
 
-  const { data, error } = useSWR("http://localhost:5024/api/v1/bis", fetcher);
+  const { data, error } = useSWR(
+    "http://tracking.ta-tmj.com/api/v1/bis",
+    fetcher
+  );
 
+  // EMERGENCY STATUS !
+  const setEmergencyStatus = async (nomorPolisi) => {
+    try {
+      await axios.patch(
+        "http://tracking.ta-tmj.com/api/v1/bis/status/set-emergency",
+        {
+          nomorPolisi: nomorPolisi,
+        }
+      );
+      // Refresh data after the status is updated
+      mutate("http://tracking.ta-tmj.com/api/v1/bis");
+    } catch (error) {
+      console.log("Error setting emergency status:", error);
+    }
+  };
+
+  // UNSET EMERGENCY STATUS !
+  const unsetEmergencyStatus = async (nomorPolisi) => {
+    try {
+      await axios.patch(
+        "http://tracking.ta-tmj.com/api/v1/bis/status/unset-emergency",
+        {
+          nomorPolisi: nomorPolisi,
+        }
+      );
+      // Refresh data after the status is updated
+      mutate("http://tracking.ta-tmj.com/api/v1/bis");
+    } catch (error) {
+      console.log("Error unsetting emergency status:", error);
+    }
+  };
+
+  // Delete Bis Function
   const deleteBis = async (bisID) => {
     const shouldDelete = window.confirm(
       "Anda yakin untuk menghapus bis ini ? 🤨"
@@ -22,10 +60,10 @@ const ManageBuses = () => {
     }
 
     try {
-      await axios.delete("http://localhost:5024/api/v1/bis", {
+      await axios.delete("http://tracking.ta-tmj.com/api/v1/bis", {
         data: { id: bisID },
       });
-      mutate("http://localhost:5024/api/v1/bis");
+      mutate("http://tracking.ta-tmj.com/api/v1/bis");
     } catch (error) {
       console.log("Error deleting bus:", error);
     }
@@ -51,7 +89,7 @@ const ManageBuses = () => {
               <h2 className="pb-8 text-4xl font-bold">Buses Management</h2>
               <Link
                 to={"/admin/dashboard/buses/add"}
-                className="flex flex-row items-center justify-center gap-4 rounded-md bg-black py-2 text-sm font-semibold text-white outline outline-1 outline-gray-200 hover:bg-white hover:text-black"
+                className="flex flex-row items-center justify-center gap-4 rounded-md bg-white py-2 text-sm font-semibold text-black outline outline-1 outline-gray-200 hover:bg-black hover:text-white"
               >
                 <BiSolidBusSchool size={16} />
                 Tambah Buses
@@ -89,6 +127,12 @@ const ManageBuses = () => {
                       scope="col"
                       className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                     >
+                      Status
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                    >
                       Actions
                     </th>
                   </tr>
@@ -101,7 +145,7 @@ const ManageBuses = () => {
                       </td>
                       <td className="whitespace-nowrap px-6 py-4">
                         <div className="text-sm text-gray-900">
-                          <p>{bus.supirId}</p>
+                          {bus.supirId ? bus.supirId : "No Driver"}
                         </div>
                       </td>
                       <td className="whitespace-nowrap px-6 py-4">
@@ -113,13 +157,12 @@ const ManageBuses = () => {
                         <div className="text-sm text-gray-900">{bus.merek}</div>
                       </td>
                       <td className="whitespace-nowrap px-6 py-4">
+                        <div className="text-sm text-gray-900">
+                          {bus.status}
+                        </div>
+                      </td>
+                      <td className="whitespace-nowrap px-6 py-4">
                         <div className="flex gap-2 text-sm">
-                          <Link
-                            to={"/admin/dashboard/buses/set/"}
-                            className="rounded bg-sky-50 px-6 py-2 text-gray-900 hover:text-sky-800"
-                          >
-                            Set Supir
-                          </Link>
                           <Link
                             to={"/admin/dashboard/buses/edit/"}
                             className="rounded bg-sky-50 px-6 py-2 text-gray-900 hover:text-sky-800"
@@ -132,6 +175,31 @@ const ManageBuses = () => {
                           >
                             Delete
                           </button>
+                          <Link
+                            to={"/admin/dashboard/buses/set/"}
+                            className="rounded bg-sky-50 px-6 py-2 text-gray-900 hover:text-sky-800"
+                          >
+                            Set Supir
+                          </Link>
+                          {bus.status === "NORMAL" ? (
+                            <button
+                              onClick={() =>
+                                setEmergencyStatus(bus.nomorPolisi)
+                              }
+                              className="bg-yellow-50 hover:text-yellow-800"
+                            >
+                              Set Emergency
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() =>
+                                unsetEmergencyStatus(bus.nomorPolisi)
+                              }
+                              className="bg-green-50 hover:text-green-800"
+                            >
+                              Unset Emergency
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>

@@ -13,7 +13,7 @@ const AddBuses = () => {
     e.preventDefault();
     // Perform form submission logic
 
-    await axios.post("http://localhost:5024/api/v1/bis", {
+    await axios.post("http://tracking.ta-tmj.com/api/v1/bis", {
       nomorPolisi: nopol,
       merk: merek,
     });
@@ -47,40 +47,12 @@ const AddBuses = () => {
           onSubmit={handleSubmit}
           ref={formRef}
         >
-          {/* <label className="flex flex-col gap-2">
-            Bus Driver
-            <div className="relative">
-              <select
-                className="block w-full appearance-none rounded border border-slate-200 bg-white px-4 py-3 pr-8 leading-tight text-gray-700 focus:border-gray-500 focus:bg-white focus:outline-none"
-                id="grid-state"
-                value={driver}
-                onChange={(e) => setDriver(e.target.value)}
-              >
-                <option value="">Select the driver</option>
-                {buses.map((bus) => (
-                  <option key={bus.id} value={bus.driver}>
-                    {bus.driver}
-                  </option>
-                ))}
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                <svg
-                  className="h-4 w-4 fill-current"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                </svg>
-              </div>
-            </div>
-          </label> */}
-
           <label className="flex flex-col gap-2">
             Nopol
             <input
               className="rounded p-2 text-sm font-normal outline outline-1 outline-slate-200 focus:bg-sky-50 focus:duration-700"
               type="text"
-              placeholder="Enter the bus police number"
+              placeholder="Masukan Nomor Polisi Kendaraan"
               value={nopol}
               onChange={(e) => setNopol(e.target.value)}
             />
@@ -91,7 +63,7 @@ const AddBuses = () => {
             <input
               className="rounded p-2 text-sm font-normal outline outline-1 outline-slate-200 focus:bg-sky-50 focus:duration-700"
               type="text"
-              placeholder="Enter the bus police number"
+              placeholder="Masukan Merek Kendaraan"
               value={merek}
               onChange={(e) => setMerk(e.target.value)}
             />

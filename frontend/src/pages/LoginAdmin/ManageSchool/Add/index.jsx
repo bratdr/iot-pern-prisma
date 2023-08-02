@@ -13,7 +13,7 @@ const AddSchool = () => {
     e.preventDefault();
     // Perform form submission logic
 
-    await axios.post("http://localhost:5024/api/v1/sekolah", {
+    await axios.post("http://tracking.ta-tmj.com/api/v1/sekolah", {
       nama: name,
       alamat: address,
       nomorTelepon: noTelp,

@@ -12,7 +12,7 @@ const SiswaList = () => {
     const fetchSiswaList = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5024/api/v1/sekolah/siswa/list/${schoolId}`
+          `http://tracking.ta-tmj.com/api/v1/sekolah/siswa/list/${schoolId}`
         );
         setSiswaList(response.data.data.daftarSiswa);
         setSchoolName(response.data.data.dataSekolah.nama);

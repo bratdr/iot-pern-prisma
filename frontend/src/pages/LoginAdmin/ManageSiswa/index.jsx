@@ -6,12 +6,31 @@ import { Link } from "react-router-dom";
 
 const ManageSiswa = () => {
   const { mutate } = useSWRConfig();
+
   const fetcher = async (url) => {
     const response = await axios.get(url);
-    return response.data.data;
+    const siswaData = response.data.data;
+
+    // Fetch individual siswa details and include cardId in the data
+    const siswaDetailsPromises = siswaData.map(async (siswa) => {
+      const detailResponse = await axios.get(
+        `http://tracking.ta-tmj.com/api/v1/siswa/${siswa.id}`
+      );
+      const siswaDetail = detailResponse.data.data;
+      return {
+        ...siswa,
+        cardId: siswaDetail.cardId,
+      };
+    });
+
+    const siswaDetails = await Promise.all(siswaDetailsPromises);
+    return siswaDetails;
   };
 
-  const { data, error } = useSWR("http://localhost:5024/api/v1/siswa", fetcher);
+  const { data, error } = useSWR(
+    "http://tracking.ta-tmj.com/api/v1/siswa",
+    fetcher
+  );
 
   const deleteSiswa = async (siswaID) => {
     // Show a confirmation alert before proceeding with the deletion
@@ -23,12 +42,56 @@ const ManageSiswa = () => {
     }
 
     try {
-      await axios.delete("http://localhost:5024/api/v1/siswa", {
+      await axios.delete("http://tracking.ta-tmj.com/api/v1/siswa", {
         data: { id: siswaID },
       });
-      mutate("http://localhost:5024/api/v1/siswa");
+      mutate("http://tracking.ta-tmj.com/api/v1/siswa");
     } catch (error) {
       console.log("Error deleting sekolah:", error);
+    }
+  };
+
+  const handleUnpairCard = async (siswaID) => {
+    // Show a confirmation alert before proceeding with unpairing
+    const shouldUnpair = window.confirm(
+      "Anda yakin untuk unpair siswa dengan card? 🤨"
+    );
+    if (!shouldUnpair) {
+      return; // User canceled the unpairing
+    }
+
+    try {
+      await axios.patch(`http://tracking.ta-tmj.com/api/v1/siswa/card/unpair`, {
+        id: siswaID,
+      });
+      mutate("http://tracking.ta-tmj.com/api/v1/siswa");
+      window.alert("Siswa unpaired from card successfully!");
+    } catch (error) {
+      console.log("Error unpairing siswa from card:", error);
+      window.alert("Error unpairing siswa from card.");
+    }
+  };
+
+  const handleUnpairSchool = async (siswaID) => {
+    // Show a confirmation alert before proceeding with unpairing
+    const shouldUnpair = window.confirm(
+      "Anda yakin untuk unpair siswa dengan sekolah? 🤨"
+    );
+    if (!shouldUnpair) {
+      return; // User canceled the unpairing
+    }
+
+    try {
+      await axios.patch(
+        `http://tracking.ta-tmj.com/api/v1/siswa/school/unpair`,
+        {
+          idSiswa: siswaID,
+        }
+      );
+      mutate("http://tracking.ta-tmj.com/api/v1/siswa");
+      window.alert("Siswa unpaired from sekolah successfully!");
+    } catch (error) {
+      console.log("Error unpairing siswa from sekolah:", error);
     }
   };
 
@@ -48,7 +111,7 @@ const ManageSiswa = () => {
               <h2 className="pb-8 text-4xl font-bold">Siswa Management</h2>
               <Link
                 to={"/admin/dashboard/siswa/add"}
-                className="flex flex-row items-center justify-center gap-4 rounded-md bg-black py-2 text-sm font-semibold text-white outline outline-1 outline-gray-200 hover:bg-white hover:text-black"
+                className="flex flex-row items-center justify-center gap-4 rounded-md bg-white py-2 text-sm font-semibold text-black outline outline-1 outline-gray-200 hover:bg-black hover:text-white"
               >
                 <FaUser size={16} />
                 Tambah Siswa
@@ -114,7 +177,7 @@ const ManageSiswa = () => {
                       </td>
                       <td className="whitespace-nowrap px-6 py-4">
                         <div className="text-sm text-gray-900">
-                          {siswa.card_id}
+                          {siswa.cardId}
                         </div>
                       </td>
                       <td className="whitespace-nowrap px-6 py-4">
@@ -130,6 +193,30 @@ const ManageSiswa = () => {
                           >
                             Edit
                           </Link>
+                          <Link
+                            to={"/admin/dashboard/siswa/pair/card"}
+                            className="rounded bg-sky-50 px-6 py-2 text-gray-900 hover:text-sky-800"
+                          >
+                            Card
+                          </Link>
+                          <Link
+                            to={"/admin/dashboard/siswa/pair/school"}
+                            className="rounded bg-sky-50 px-6 py-2 text-gray-900 hover:text-sky-800"
+                          >
+                            School
+                          </Link>
+                          <button
+                            onClick={() => handleUnpairCard(siswa.id)} // Added onClick event for unpairing from card
+                            className="bg-rose-50 hover:text-red-800"
+                          >
+                            Unpair Card
+                          </button>
+                          <button
+                            onClick={() => handleUnpairSchool(siswa.id)} // Added onClick event for unpairing from school
+                            className="bg-rose-50 hover:text-red-800"
+                          >
+                            Unpair School
+                          </button>
                           <button
                             onClick={() => deleteSiswa(siswa.id)}
                             className="bg-rose-50 hover:text-red-800"

@@ -11,7 +11,7 @@ const ManageDriver = () => {
     return response.data.data;
   };
 
-  const { data, error } = useSWR("http://localhost:5024/api/v1/supir", fetcher);
+  const { data, error } = useSWR("http://tracking.ta-tmj.com/api/v1/supir", fetcher);
 
   const deleteSupir = async (supirID) => {
     // Show a confirmation alert before proceeding with the deletion
@@ -23,10 +23,10 @@ const ManageDriver = () => {
     }
 
     try {
-      await axios.delete("http://localhost:5024/api/v1/supir", {
+      await axios.delete("http://tracking.ta-tmj.com/api/v1/supir", {
         data: { id: supirID },
       });
-      mutate("http://localhost:5024/api/v1/supir");
+      mutate("http://tracking.ta-tmj.com/api/v1/supir");
     } catch (error) {
       console.log("Error deleting driver:", error);
     }
@@ -52,7 +52,7 @@ const ManageDriver = () => {
               <h2 className="pb-8 text-4xl font-bold">Drivers Management</h2>
               <Link
                 to={"/admin/dashboard/driver/add"}
-                className="flex flex-row items-center justify-center gap-4 rounded-md bg-black py-2 text-sm font-semibold text-white outline outline-1 outline-gray-200 hover:bg-white hover:text-black"
+                className="flex flex-row items-center justify-center gap-4 rounded-md bg-white py-2 text-sm font-semibold text-black outline outline-1 outline-gray-200 hover:bg-black hover:text-white"
               >
                 <FaUser size={16} />
                 Tambah Supir

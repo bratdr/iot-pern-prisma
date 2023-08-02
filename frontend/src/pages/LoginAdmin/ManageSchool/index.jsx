@@ -12,7 +12,7 @@ const ManageSchool = () => {
   };
 
   const { data, error } = useSWR(
-    "http://localhost:5024/api/v1/sekolah",
+    "http://tracking.ta-tmj.com/api/v1/sekolah",
     fetcher
   );
 
@@ -26,10 +26,10 @@ const ManageSchool = () => {
     }
 
     try {
-      await axios.delete("http://localhost:5024/api/v1/sekolah", {
+      await axios.delete("http://tracking.ta-tmj.com/api/v1/sekolah", {
         data: { id: sekolahID },
       });
-      mutate("http://localhost:5024/api/v1/sekolah");
+      mutate("http://tracking.ta-tmj.com/api/v1/sekolah");
     } catch (error) {
       console.log("Error deleting sekolah:", error);
     }

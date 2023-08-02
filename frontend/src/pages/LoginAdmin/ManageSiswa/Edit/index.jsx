@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const EditUser = () => {
+const EditSiswa = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -10,13 +10,13 @@ const EditUser = () => {
   const [siswaData, setSiswaData] = useState([]);
   const [nama, setNama] = useState("");
   const [nisn, setNisn] = useState("");
-  const [card_id, setCard] = useState("");
+  const [cardId, setCard] = useState("");
   const [sekolah, setSekolah] = useState("");
 
   useEffect(() => {
     const fetchSiswaData = async () => {
       try {
-        const response = await axios.get("http://localhost:5024/api/v1/siswa");
+        const response = await axios.get("http://tracking.ta-tmj.com/api/v1/siswa");
         setSiswaData(response.data.data);
         setSelectedId(id);
       } catch (error) {
@@ -28,28 +28,36 @@ const EditUser = () => {
   }, [id]);
 
   useEffect(() => {
-    const selectedSiswa = siswaData.find((siswa) => siswa.id === selectedId);
+    const fetchSiswaDetail = async () => {
+      try {
+        const response = await axios.get(`http://tracking.ta-tmj.com/api/v1/siswa/${selectedId}`);
+        const siswaDetail = response.data.data;
+        setNama(siswaDetail.nama);
+        setNisn(siswaDetail.nisn);
+        setCard(siswaDetail.cardId); // Use the correct field name
+        setSekolah(siswaDetail.sekolahId);
+      } catch (error) {
+        console.log("Error fetching siswa detail:", error);
+      }
+    };
 
-    if (selectedSiswa) {
-      setNama(selectedSiswa.nama);
-      setNisn(selectedSiswa.nisn);
-      setCard(selectedSiswa.card_id);
-      setSekolah(selectedSiswa.sekolah);
+    if (selectedId) {
+      fetchSiswaDetail();
     }
-  }, [selectedId, siswaData]);
+  }, [selectedId]);
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
     try {
       // First, update the selected siswa's data in the API
-      await axios.post(`http://localhost:5024/api/v1/siswa/card/pair`, {
+      await axios.post(`http://tracking.ta-tmj.com/api/v1/siswa/card/pair`, {
         id: selectedId,
-        cardID: card_id,
+        cardID: cardId,
       });
 
       // Next, update the other siswa data (nama, nisn, sekolah) with a patch request
-      await axios.patch(`http://localhost:5024/api/v1/siswa`, {
+      await axios.patch(`http://tracking.ta-tmj.com/api/v1/siswa`, {
         id: selectedId,
         nama,
         nisn,
@@ -117,7 +125,7 @@ const EditUser = () => {
               className="mb-4 rounded p-2 text-sm font-normal outline outline-1 outline-slate-200 focus:bg-sky-50 focus:duration-700"
               type="text"
               placeholder="Enter the driver address"
-              value={card_id}
+              value={cardId}
               onChange={(e) => setCard(e.target.value)}
             />
           </label>
@@ -140,4 +148,4 @@ const EditUser = () => {
   );
 };
 
-export default EditUser;
+export default EditSiswa;

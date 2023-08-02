@@ -15,7 +15,7 @@ const EditDriver = () => {
   useEffect(() => {
     const fetchDriverData = async () => {
       try {
-        const response = await axios.get("http://localhost:5024/api/v1/supir");
+        const response = await axios.get("http://tracking.ta-tmj.com/api/v1/supir");
         setDriverData(response.data.data);
         setSelectedId(id);
       } catch (error) {
@@ -42,7 +42,7 @@ const EditDriver = () => {
     e.preventDefault();
 
     try {
-      await axios.patch("http://localhost:5024/api/v1/supir", {
+      await axios.patch("http://tracking.ta-tmj.com/api/v1/supir", {
         id: selectedId,
         nama,
         alamat,

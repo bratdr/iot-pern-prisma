@@ -12,7 +12,7 @@ const AddUser = () => {
     e.preventDefault();
     // Perform form submission logic
 
-    await axios.post("http://localhost:5024/api/v1/siswa", {
+    await axios.post("http://tracking.ta-tmj.com/api/v1/siswa", {
       nama: name,
       nisn: no_induk,
     });
