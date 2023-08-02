@@ -1,109 +1,94 @@
-import React, { useEffect, useState, useRef } from "react";
-import { FaBus } from "react-icons/fa";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import L from "leaflet";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
 const MapApp = () => {
-  const [userLocation, setUserLocation] = useState({});
-  const mapRef = useRef(null);
-
-  const fetchLocationDetails = async (latitude, longitude) => {
-    try {
-      const response = await axios.get(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
-      );
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching location details:", error);
-      return null;
-    }
-  };
+  const [busData, setBusData] = useState(null);
 
   useEffect(() => {
-    // Initialize the map
-    if (!mapRef.current) {
-      mapRef.current = L.map("map").setView([-6.366204, 106.820784], 16); // Set initial view to your specific coordinates
+    // Fetch the specific bus with ID "clkqqwx5l0000vey09t1mk9o5"
+    fetchBusData("clkqqwx5l0000vey09t1mk9o5");
 
-      // Add the OpenStreetMap tile layer
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(
-        mapRef.current
-      );
-    }
+    // Set interval to fetch the specific bus data every 5 seconds
+    const interval = setInterval(
+      () => fetchBusData("clkqqwx5l0000vey09t1mk9o5"),
+      5000
+    );
 
-    // Function to add a marker with address popup to the map
-    const addMarkerToMap = async (latitude, longitude) => {
-      // Fetch location details using the Postman API
-      const locationDetails = await fetchLocationDetails(latitude, longitude);
-
-      if (locationDetails) {
-        setUserLocation({
-          latitude,
-          longitude,
-          address: locationDetails.display_name,
-        });
-
-        // Add a marker with a popup showing the address at the specific coordinates
-        const popupContent = `<b>${locationDetails.display_name}</b>`;
-        L.marker([latitude, longitude])
-          .addTo(mapRef.current)
-          .bindPopup(popupContent)
-          .openPopup();
-      }
-    };
-
-    // Fetch location details for your specific coordinates and add a marker to the map
-    addMarkerToMap(-6.366204, 106.820784);
-
-    // Function to track user's coordinates
-    const trackCoordinates = async () => {
-      if (navigator.geolocation) {
-        navigator.geolocation.watchPosition(
-          async (position) => {
-            const { latitude, longitude } = position.coords;
-
-            // Fetch location details using the Postman API
-            const locationDetails = await fetchLocationDetails(
-              latitude,
-              longitude
-            );
-
-            if (locationDetails) {
-              setUserLocation({
-                latitude,
-                longitude,
-                address: locationDetails.display_name,
-              });
-
-              // Set the map view to the user's location
-              mapRef.current.setView([latitude, longitude], 13);
-
-              // Add a marker with a popup showing the address at the user's location
-              const popupContent = `<b>${locationDetails.display_name}</b>`;
-              L.marker([latitude, longitude])
-                .addTo(mapRef.current)
-                .bindPopup(popupContent)
-                .openPopup();
-            }
-          },
-          (error) => {
-            console.error("Error tracking coordinates:", error);
-          }
-        );
-      } else {
-        console.error("Geolocation is not supported by this browser.");
-      }
-    };
-
-    trackCoordinates();
+    // Clear the interval on component unmount
+    return () => clearInterval(interval);
   }, []);
+
+  const fetchBusData = async (busId) => {
+    try {
+      const response = await axios.get(
+        `http://tracking.ta-tmj.com/api/v1/bis/${busId}`
+      );
+      if (response.data.success) {
+        setBusData(response.data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching bus data:", error);
+    }
+  };
 
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center border border-black bg-black px-5 pb-10 sm:h-screen sm:w-screen">
       <h1 className="flex flex-row items-center justify-center gap-2 py-2 text-center text-sm font-bold text-white sm:w-full sm:bg-black sm:text-lg sm:text-white">
         Tracking Location :
       </h1>
-      <div id="map" className="h-full w-full"></div>
+      <div id="map" className="h-full w-full">
+        <MapContainer
+          center={
+            busData?.position
+              ? busData.position.split(",").map(Number)
+              : [-6.366116, 106.820671]
+          }
+          zoom={28}
+          style={{ height: "100%" }}
+        >
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+
+          {busData && (
+            <Marker position={busData.position.split(",").map(Number)}>
+              <Popup>
+                <h2>Bus Details</h2>
+                <p>
+                  <strong>Bus ID:</strong> {busData.id}
+                  <br />
+                  <strong>License Plate:</strong> {busData.nomorPolisi}
+                  <br />
+                  <strong>Brand:</strong> {busData.merek}
+                  <br />
+                  <strong>Status:</strong> {busData.status}
+                  <br />
+                  {busData.supir && (
+                    <>
+                      <strong>Driver Name:</strong> {busData.supir.nama}
+                      <br />
+                      <strong>Driver Phone:</strong>{" "}
+                      {busData.supir.nomorTelepon}
+                      <br />
+                      <strong>Driver Address:</strong> {busData.supir.alamat}
+                      <br />
+                    </>
+                  )}
+                  {busData.streetName && (
+                    <>
+                      <strong>Street Name:</strong> {busData.streetName}
+                      <br />
+                    </>
+                  )}
+                </p>
+              </Popup>
+            </Marker>
+          )}
+        </MapContainer>
+      </div>
     </div>
   );
 };
