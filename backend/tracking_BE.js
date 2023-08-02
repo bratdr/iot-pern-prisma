@@ -3,7 +3,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const express = require("express");
 const app = express();
-const PORT = process.env.PORT || 5024;
+const PORT = process.env.PORT || 8080;
 const { router: ROUTER, mqttTopic } = require("./router");
 const { MqttServer } = require("./mqttserver");
 

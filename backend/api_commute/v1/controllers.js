@@ -1,7 +1,7 @@
 const prisma = require("../../prisma/client");
 const { resError, resSuccess } = require("../../services/responseHandler");
 const axios = require("axios");
-const ITEM_LIMIT = 2;
+const ITEM_LIMIT = Number(process.env.ITEM_LIMIT) || 10;
 
 // START COMMUTING
 exports.startCommuting = async (req, res) => {

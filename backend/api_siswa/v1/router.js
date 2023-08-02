@@ -9,6 +9,8 @@ router
     .patch(controllers.edit)
     .delete(controllers.delete);
 
+router.route("/:id").get(controllers.detail);
+
 router.post("/card/pair", controllers.hubungkanSiswaKeKartu);
 router.patch("/card/unpair", controllers.pustuskanHubungkanSiswaKeKartu);
 router.post("/school/pair", controllers.hubungkanSiswaKeSekolah);

@@ -1,6 +1,6 @@
-const prisma = require('../../prisma/client')
+const prisma = require("../../prisma/client");
 const { resError, resSuccess } = require("../../services/responseHandler");
-const ITEM_LIMIT = 2;
+const ITEM_LIMIT = Number(process.env.ITEM_LIMIT) || 10;
 
 exports.create = async (req, res) => {
     try {
@@ -150,6 +150,29 @@ exports.delete = async (req, res) => {
             res,
             errors: error,
             title: "Gagal menghapus data supir",
+            code: 400,
+        });
+    }
+};
+
+exports.detail = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const data = await prisma.supir.findUnique({
+            where: {
+                id: id,
+            },
+        });
+        return resSuccess({
+            res,
+            title: "Berhasil mendapatkan data supir",
+            data: data,
+        });
+    } catch (error) {
+        resError({
+            res,
+            errors: error,
+            title: "Gagal mendapatkan data supir",
             code: 400,
         });
     }

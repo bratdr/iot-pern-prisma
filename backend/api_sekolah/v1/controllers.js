@@ -1,6 +1,6 @@
 const prisma = require("../../prisma/client");
 const { resError, resSuccess } = require("../../services/responseHandler");
-const ITEM_LIMIT = 2;
+const ITEM_LIMIT = Number(process.env.ITEM_LIMIT) || 10;
 
 exports.create = async (req, res) => {
     try {
@@ -150,6 +150,29 @@ exports.delete = async (req, res) => {
             res,
             errors: error,
             title: "Gagal menghapus data sekolah",
+            code: 400,
+        });
+    }
+};
+
+exports.detail = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const data = await prisma.sekolah.findUnique({
+            where: {
+                id: id,
+            },
+        });
+        return resSuccess({
+            res,
+            title: "Berhasil mendapatkan data sekolah",
+            data: data,
+        });
+    } catch (error) {
+        return resError({
+            res,
+            errors: error,
+            title: "Gagal mendapatkan detail sekolah",
             code: 400,
         });
     }
