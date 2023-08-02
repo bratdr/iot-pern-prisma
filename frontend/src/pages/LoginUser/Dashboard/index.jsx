@@ -1,7 +1,7 @@
+import axios from "axios";
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import Navigation from "../../../components/Navigation";
-import OpenMaps from "../../../components/OpenMaps";
+import { useParams, useNavigate } from "react-router-dom";
+
 import { TbMoodKidFilled } from "react-icons/tb";
 import { FaCarAlt, FaIdCard, FaSchool, FaUserAlt } from "react-icons/fa";
 import {
@@ -9,8 +9,10 @@ import {
   FaMapLocation,
   FaLocationDot,
 } from "react-icons/fa6";
-import axios from "axios";
 import { RiRadioButtonFill } from "react-icons/ri";
+
+import Navigation from "../../../components/Navigation";
+import OpenMaps from "../../../components/OpenMaps";
 
 const Dashboard = () => {
   const { idsiswa } = useParams();
