@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { Icon } from "leaflet";
 import "leaflet/dist/leaflet.css";
+import busIcon from "../assets/bus-stop.png";
 
 const MapApp = () => {
   const [busData, setBusData] = useState(null);
+  const customIcon = new Icon({
+    iconUrl: busIcon,
+    iconSize: [42, 42],
+  });
 
   useEffect(() => {
     // Fetch the specific bus with ID "clkqqwx5l0000vey09t1mk9o5"
@@ -50,7 +56,10 @@ const MapApp = () => {
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
 
-            <Marker position={busData.position.split(",").map(Number)}>
+            <Marker
+              position={busData.position.split(",").map(Number)}
+              icon={customIcon}
+            >
               <Popup>
                 <h2>Bus Details</h2>
                 <p>
