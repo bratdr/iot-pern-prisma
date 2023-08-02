@@ -5,10 +5,8 @@ import Navigation from "../../../components/Navigation";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
-import { TbMoodKidFilled } from "react-icons/tb";
 import { FaHistory, FaIdCard, FaSchool } from "react-icons/fa";
 import { FaMapLocationDot, FaMapLocation } from "react-icons/fa6";
-import { BiIdCard } from "react-icons/bi";
 
 const HistoryPage = () => {
   const { idsiswa } = useParams();
@@ -184,7 +182,7 @@ const HistoryPage = () => {
             </h1>
 
             <h1 className="text-center text-base font-semibold">
-              Commute Siswa History:
+              Commute Siswa History: {user.nama}
             </h1>
 
             {commuteData.map((commute, index) => (
