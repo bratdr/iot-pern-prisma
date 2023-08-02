@@ -133,23 +133,16 @@ const Dashboard = () => {
         const commuteData = commuteResponse.data?.data;
 
         if (success && commuteData && commuteData.length > 0) {
-          // Sort the Commuter List data based on the updatedAt field in descending order
-          const sortedData = commuteData.sort(
-            (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
-          );
-
-          // Reverse the array to get the newest data first
-          const newestCommuteData = sortedData.reverse();
-
-          // Get the latest Commuter List entry
-          const latestCommuteData = newestCommuteData[0];
-
-          setCommuteData(latestCommuteData);
+          // Get the newest Commuter List entry (the first element in the array)
+          const newestCommuteData = commuteData[0];
+          setCommuteData(newestCommuteData);
         } else {
           console.error("Failed to fetch commute data.");
         }
       } catch (error) {
         console.error("Error fetching commute data:", error);
+      } finally {
+        setIsLoading(false); // Set isLoading to false after fetching the data
       }
     };
 
@@ -157,9 +150,6 @@ const Dashboard = () => {
       fetchCommuteData();
     }
   }, [user?.nisn]);
-  if (isLoading || !commuteData) {
-    return <div>Loading...</div>;
-  }
 
   if (!user) {
     return <div>User not found.</div>;
