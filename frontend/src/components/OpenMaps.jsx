@@ -39,21 +39,17 @@ const MapApp = () => {
         Tracking Location :
       </h1>
       <div id="map" className="h-full w-full">
-        <MapContainer
-          center={
-            busData?.position
-              ? busData.position.split(",").map(Number)
-              : [-6.366116, 106.820671]
-          }
-          zoom={28}
-          style={{ height: "100%" }}
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
+        {busData && (
+          <MapContainer
+            center={busData.position.split(",").map(Number)}
+            zoom={32}
+            style={{ height: "100%" }}
+          >
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
 
-          {busData && (
             <Marker position={busData.position.split(",").map(Number)}>
               <Popup>
                 <h2>Bus Details</h2>
@@ -86,8 +82,8 @@ const MapApp = () => {
                 </p>
               </Popup>
             </Marker>
-          )}
-        </MapContainer>
+          </MapContainer>
+        )}
       </div>
     </div>
   );
