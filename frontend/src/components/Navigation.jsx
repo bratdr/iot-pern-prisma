@@ -2,12 +2,10 @@ import axios from "axios";
 
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { HiLogout, HiMenuAlt3 } from "react-icons/hi";
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { data_dashboard } from "../data/Dashboard";
 import { FaLocationDot } from "react-icons/fa6";
 import { FaHistory } from "react-icons/fa";
-import { TbMoodKidFilled } from "react-icons/tb";
 import { BiLogOut } from "react-icons/bi";
 
 const Navigation = () => {
@@ -16,6 +14,8 @@ const Navigation = () => {
   const [bus, setBus] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [open, setOpen] = useState(true);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch the user data based on idsiswa from the API
@@ -77,30 +77,38 @@ const Navigation = () => {
     return <div>Bus not found.</div>;
   }
 
+  const navigateToHistory = () => {
+    navigate(`/user/dashboard/history/${idsiswa}`);
+  };
+
+  const navigateToDashboard = () => {
+    navigate(`/user/dashboard/${idsiswa}`);
+  };
+
   return (
     <>
       <div>
         <section className="flex w-screen items-center justify-center gap-2 bg-white py-3 sm:justify-between sm:px-6 ">
           <div className="flex flex-row gap-2 sm:gap-4 ">
             <div className="relative flex flex-col gap-4">
-              <Link
+              <button
                 className="group flex items-center gap-3.5 rounded-md bg-slate-100 p-2 text-sm font-medium text-black hover:text-rose-600"
-                onClick={() => setOpen(!open)}
+                onClick={navigateToDashboard}
               >
                 <FaLocationDot className="text-rose-600" size={22} />
                 <p className="text-xs font-semibold sm:text-base">
                   Tracking Position
                 </p>
-              </Link>
+              </button>
             </div>
             <div className="relative flex flex-col gap-4">
-              <Link
-                to={"/user/dashboard/history/"}
+              <button
+                onClick={navigateToHistory}
                 className="group flex items-center gap-3.5 rounded-md bg-slate-100 p-2 text-sm font-medium text-black hover:text-rose-600"
               >
                 <FaHistory className="text-sky-600" size={22} />
                 <p className="text-xs font-semibold sm:text-base">History</p>
-              </Link>
+              </button>
             </div>
           </div>
 
