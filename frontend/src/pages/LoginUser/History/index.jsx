@@ -184,8 +184,29 @@ const HistoryPage = () => {
             <h1 className="text-center text-base font-semibold">
               Commute Siswa History: {user.nama}
             </h1>
-
-            {commuteData.map((commute, index) => (
+            <div className="w-screen px-6">
+              <table className="w-full text-left text-sm text-gray-500">
+                <thead className="bg-sky-300 text-sm uppercase text-black">
+                  <tr>
+                    <th>No</th>
+                    <th>ID Commute</th>
+                    <th>Posisi Naik</th>
+                    <th>Posisi Turun</th>
+                  </tr>
+                </thead>
+                {commuteData.map((commute, index) => (
+                  <tbody className="border-b bg-white">
+                    <tr className="whitespace-nowrap px-6 py-4 text-xs font-medium text-gray-900 dark:text-white">
+                      <th>{index + 1}</th>
+                      <th>{commute.id}</th>
+                      <th>{commute.startPosition}</th>
+                      <th>{commute.finishPosition}</th>
+                    </tr>
+                  </tbody>
+                ))}
+              </table>
+            </div>
+            {/* {commuteData.map((commute, index) => (
               <div
                 key={commute.id}
                 className="flex flex-col items-center justify-center"
@@ -229,7 +250,7 @@ const HistoryPage = () => {
                   </div>
                 </div>
               </div>
-            ))}
+            ))} */}
           </div>
         </div>
       </div>
