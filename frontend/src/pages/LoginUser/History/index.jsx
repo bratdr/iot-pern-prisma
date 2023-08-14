@@ -1,174 +1,71 @@
 import axios from "axios";
-
 import Navigation from "../../../components/Navigation";
-
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-
-import { FaHistory, FaIdCard, FaSchool } from "react-icons/fa";
-import { FaMapLocationDot, FaMapLocation } from "react-icons/fa6";
+import { FaHistory } from "react-icons/fa";
 
 const HistoryPage = () => {
   const { idsiswa } = useParams();
   const [user, setUser] = useState(null);
   const [bus, setBus] = useState(null);
   const [sekolah, setSekolah] = useState(null);
-  const [commuteData, setCommuteData] = useState(null); // New state variable for commute data
+  const [commuteData, setCommuteData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch the user data based on idsiswa from the API
-    const fetchUserData = async () => {
+    setIsLoading(true);
+
+    const fetchData = async () => {
       try {
         const userResponse = await axios.get(
           `http://tracking.ta-tmj.com/api/v1/siswa/${idsiswa}`
         );
-        const success = userResponse.data?.success;
-        const userData = userResponse.data?.data;
+        const busId = "clkqqwx5l0000vey09t1mk9o5"; // Replace with actual bus ID
+        const [sekolahResponse, commuteListResponse, busResponse] =
+          await Promise.all([
+            axios.get("http://tracking.ta-tmj.com/api/v1/sekolah"),
+            axios.get(`http://tracking.ta-tmj.com/api/v1/commute/list`),
+            axios.get(`http://tracking.ta-tmj.com/api/v1/bis/${busId}`),
+          ]);
 
-        if (success && userData) {
-          setUser(userData);
+        const success =
+          userResponse.data?.success &&
+          sekolahResponse.data?.success &&
+          commuteListResponse.data?.success &&
+          busResponse.data?.success;
+
+        if (success) {
+          setUser(userResponse.data.data);
+          setSekolah(
+            sekolahResponse.data.data.find(
+              (sekolah) => sekolah.id === userResponse.data.data.sekolahId
+            )
+          );
+          setCommuteData(
+            commuteListResponse.data.data.sort(
+              (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+            )
+          );
+          setBus(busResponse.data.data);
         } else {
-          console.error("Failed to fetch user data.");
+          console.error("Failed to fetch data.");
         }
       } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
-
-    fetchUserData();
-  }, [idsiswa]);
-
-  useEffect(() => {
-    // Fetch the bus data from the API using the specific bus ID
-    const fetchBusData = async () => {
-      try {
-        const busId = "clkqqwx5l0000vey09t1mk9o5"; // Replace this with the actual bus ID from the API response or any other method to obtain the specific bus ID
-        const busResponse = await axios.get(
-          `http://tracking.ta-tmj.com/api/v1/bis/${busId}`
-        );
-        const success = busResponse.data?.success;
-        const busData = busResponse.data?.data;
-
-        if (success && busData) {
-          setBus(busData);
-        } else {
-          console.error("Failed to fetch bus data.");
-        }
-      } catch (error) {
-        console.error("Error fetching bus data:", error);
+        console.error("Error fetching data:", error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchBusData();
-  }, []);
+    fetchData();
+  }, [idsiswa]);
 
-  useEffect(() => {
-    // Fetch the sekolah data using the sekolahId from the user data
-    const fetchSekolahData = async () => {
-      try {
-        const sekolahId = user?.sekolahId;
-        console.log("sekolahId:", sekolahId);
-
-        if (!sekolahId) {
-          console.error("Sekolah ID not found.");
-          return;
-        }
-
-        const sekolahResponse = await axios.get(
-          "http://tracking.ta-tmj.com/api/v1/sekolah"
-        );
-
-        const success = sekolahResponse.data?.success;
-        const sekolahData = sekolahResponse.data?.data;
-
-        if (success && sekolahData && sekolahData.length > 0) {
-          const foundSekolah = sekolahData.find(
-            (sekolah) => sekolah.id === sekolahId
-          );
-
-          if (foundSekolah) {
-            setSekolah(foundSekolah);
-          } else {
-            console.error("Sekolah not found in the API response.");
-          }
-        } else {
-          console.error("Failed to fetch sekolah data.");
-        }
-      } catch (error) {
-        console.error("Error fetching sekolah data:", error);
-      }
-    };
-
-    if (user?.sekolahId) {
-      fetchSekolahData();
-    }
-  }, [user?.sekolahId]);
-
-  useEffect(() => {
-    // Fetch the commute data using the nisn value from the user data
-    const fetchCommuteData = async () => {
-      try {
-        const nisn = user?.nisn;
-        console.log("nisn:", nisn);
-
-        if (!nisn) {
-          console.error("NISN not found.");
-          return;
-        }
-
-        const commuteResponse = await axios.get(
-          `http://tracking.ta-tmj.com/api/v1/commute/cari-siswa?nisn=${nisn}`
-        );
-
-        console.log("commuteResponse:", commuteResponse.data);
-
-        const success = commuteResponse.data?.success;
-        const commuteData = commuteResponse.data?.data;
-
-        console.log("commuteData:", commuteData);
-
-        if (success && commuteData && commuteData.length > 0) {
-          // Sort the Commuter List data based on the updatedAt field in descending order
-          const sortedData = commuteData.sort(
-            (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
-          );
-
-          // Reverse the array to get the newest data first
-          const newestCommuteData = sortedData.reverse();
-
-          setCommuteData(newestCommuteData); // Set the entire array of history data
-        } else {
-          console.error("Failed to fetch commute data.");
-          setCommuteData([]); // Set an empty array to indicate no history data available
-        }
-      } catch (error) {
-        console.error("Error fetching commute data:", error);
-        setCommuteData([]); // Set an empty array to indicate no history data available
-      }
-    };
-
-    if (user?.nisn) {
-      fetchCommuteData();
-    }
-  }, [user?.nisn]);
-
-  if (isLoading || !commuteData) {
+  if (isLoading) {
     return <div>Loading...</div>;
   }
 
-  if (!Array.isArray(commuteData)) {
-    return <div>No history data available.</div>;
-  }
-
-  if (!user) {
-    return <div>User not found.</div>;
-  }
-
-  if (!bus) {
-    return <div>Bus not found.</div>;
+  if (!user || !bus) {
+    return <div>User or Bus data not found.</div>;
   }
 
   return (
@@ -182,7 +79,7 @@ const HistoryPage = () => {
             </h1>
 
             <h1 className="text-center text-base font-semibold">
-              Commute Siswa History: {user.nama}
+              History Commute: {user.nama}
             </h1>
             <div className="w-screen px-6">
               <table className="w-full text-left text-sm text-gray-500">
@@ -192,65 +89,24 @@ const HistoryPage = () => {
                     <th>ID Commute</th>
                     <th>Posisi Naik</th>
                     <th>Posisi Turun</th>
+                    <th>Waktu Naik</th>
+                    <th>Waktu Turun</th>
                   </tr>
                 </thead>
-                {commuteData.map((commute, index) => (
-                  <tbody className="border-b bg-white">
-                    <tr className="whitespace-nowrap px-6 py-4 text-xs font-medium text-gray-900 dark:text-white">
-                      <th>{index + 1}</th>
-                      <th>{commute.id}</th>
-                      <th>{commute.startPosition}</th>
-                      <th>{commute.finishPosition}</th>
+                <tbody>
+                  {commuteData.map((commute, index) => (
+                    <tr className="border-b bg-white" key={commute.id}>
+                      <td>{index + 1}</td>
+                      <td>{commute.id}</td>
+                      <td>{commute.startPosition}</td>
+                      <td>{commute.finishPosition}</td>
+                      <td>{commute.createdAt}</td>
+                      <td>{commute.updatedAt}</td>
                     </tr>
-                  </tbody>
-                ))}
+                  ))}
+                </tbody>
               </table>
             </div>
-            {/* {commuteData.map((commute, index) => (
-              <div
-                key={commute.id}
-                className="flex flex-col items-center justify-center"
-              >
-                <div className="w-96 bg-white">
-                  <div className="flex flex-row items-center p-2 sm:flex-col">
-                    <h1 className="flex flex-row items-center justify-center gap-2 text-sm font-bold "></h1>
-                    <p className="w-56 text-sm font-bold sm:text-center">
-                      Data No. {index + 1 || "Not available"}
-                    </p>
-                  </div>
-
-                  <div className="flex flex-row items-center p-2 sm:flex-col">
-                    <h1 className="flex flex-row items-center justify-center gap-2 text-sm font-medium ">
-                      <FaIdCard color="red" />
-                      ID Commute:
-                    </h1>
-                    <p className="w-56 text-xs font-medium sm:text-center">
-                      {commute.id || "Not available"}
-                    </p>
-                  </div>
-
-                  <div className="flex flex-row items-center p-2 sm:flex-col">
-                    <h1 className="flex flex-row items-center justify-center gap-2 text-sm font-medium ">
-                      <FaMapLocation color="red" />
-                      Posisi Naik:
-                    </h1>
-                    <p className="w-56 text-xs font-medium sm:text-center">
-                      {commute.startPosition || "Not available"}
-                    </p>
-                  </div>
-
-                  <div className="flex flex-row items-center p-2 sm:flex-col">
-                    <h1 className="flex flex-row items-center justify-center gap-2 text-sm font-medium ">
-                      <FaMapLocationDot color="red" />
-                      Posisi Turun:
-                    </h1>
-                    <p className="w-56 text-xs font-medium sm:text-center">
-                      {commute.finishPosition || "Not available"}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))} */}
           </div>
         </div>
       </div>
