@@ -1,9 +1,15 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import { TbMoodKidFilled } from "react-icons/tb";
-import { FaCarAlt, FaIdCard, FaSchool, FaUserAlt } from "react-icons/fa";
+import {
+  FaBusAlt,
+  FaCarAlt,
+  FaIdCard,
+  FaSchool,
+  FaUserAlt,
+} from "react-icons/fa";
 import {
   FaMapLocationDot,
   FaMapLocation,
@@ -186,6 +192,22 @@ const Dashboard = () => {
               </h1>
               <p className="text-xs font-medium sm:text-center">
                 {sekolah?.nama}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-col">
+            <div className="flex flex-row items-center gap-2 p-2 sm:flex-col">
+              <h1 className="flex flex-row items-center justify-center gap-2 text-sm font-bold ">
+                <FaBusAlt color="red" />
+                Status Commute :
+              </h1>
+              <p className="w-56 text-xs font-medium sm:text-center">
+                {commuteData?.isActiveCommuting ? (
+                  <span className="text-green-600">Aktif</span>
+                ) : (
+                  <span className="text-red-500 line-through">Tidak Aktif</span>
+                )}
               </p>
             </div>
           </div>
