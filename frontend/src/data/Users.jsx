@@ -83,4 +83,23 @@ export const users = [
     school: schools.find((school) => school.id === "3")?.name,
     ktm_card: ktm,
   },
+  {
+    id: "10", // namanya id user
+    name: "Ismail bin Mail", // nama user
+    nisn: "907891123123243", // masukan nisn
+    card_id: "A2G25T12312E456",
+    parent: "Amin",
+    school: schools.find((school) => school.id === "1")?.name,
+    ktm_card: ktm,
+  },
+  // Ini line yg harus di edit untuk menambah user contoh dibawah :
+  // {
+  //   id: "10",
+  //   name: "Ismail bin Mail",
+  //   nisn: "907891123123243",
+  //   card_id: "A2G25T12312E456",
+  //   parent: "Amin",
+  //   school: schools.find((school) => school.id === "1")?.name,
+  //   ktm_card: ktm,
+  // },
 ];
