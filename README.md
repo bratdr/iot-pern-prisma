@@ -4,7 +4,6 @@
 
 <div align="center">
   <h1>Bus Tracking Website with "ESP32 + Lora"</h1>
-  <h3>The best profile readme generator you will find!</h3>
 </div>
 
 ## :dart: About ##
