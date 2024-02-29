@@ -6,7 +6,7 @@
   <h1>Bus Tracking Website with "ESP32 + Lora"</h1>
 </div>
 
-## :dart: About ##
+## About ##
 
 Hello i'm Brata 👋😊, this is the project i have been created for my friend capstone project in "Jakarta State Polytechnic" about User and Driver Tracking with Management for a campus/school buses. 
 We are using React as frontend (🤓 Brata Works), Express as backend (🤓 Dimas Works), Postgresql as database (🤓 Dimas Works), Prisma as orm, and ESP32+LoRa for Collect the GPS Tracking data (🤓 Radit Works).
